@@ -926,10 +926,11 @@ class ListeIndexTest {
 
         assertTrue( a.taille() <= NOMBRE_CHOIX );
 
+
         // Quelques statisque.
         // Enlevez les commentaires pour les exécuter.
         // remettre les commentaires pour avoir le bon temps d'exécution pour l'insertion.
-        /*
+
         int nbrListe = a.nbrListe();
         System.out.println( "nbrListe : " + nbrListe);
         System.out.println( "moyenne d'element par liste : " + ( ((double)NOMBRE_CHOIX) / nbrListe) );
@@ -957,6 +958,10 @@ class ListeIndexTest {
         System.out.println( "taille maximale : " + tailleMaximale );
         System.out.println( "taille moyenne des intervales : " + ( sommeTailleIntervalle / nbrListe ) );
         System.out.println( "(intervale de valeur) div (nbrListe) : " + ( ((double)( MAXIMA - MINIMA ) ) / nbrListe ) );
-        */
+
     }
+
+
+
+
 }

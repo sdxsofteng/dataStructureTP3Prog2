@@ -1,13 +1,13 @@
 package inf2120.tp3;
 
-public class Maillon< E extends Comparable<E>> {
+public class MaillonListeMilieu< E extends Comparable<E>> {
 
     E valeur;
-    Maillon<E> suivant = null;
+    MaillonListeMilieu<E> suivant = null;
 
-    public Maillon(){ }
+    public MaillonListeMilieu(){ }
 
-    public Maillon(E valeur) {
+    public MaillonListeMilieu(E valeur) {
         this.valeur = valeur;
     }
 
@@ -19,11 +19,11 @@ public class Maillon< E extends Comparable<E>> {
         this.valeur = valeur;
     }
 
-    public Maillon<E> getSuivant() {
+    public MaillonListeMilieu<E> getSuivant() {
         return suivant;
     }
 
-    public void setSuivant(Maillon<E> suivant) {
+    public void setSuivant(MaillonListeMilieu<E> suivant) {
         this.suivant = suivant;
     }
 

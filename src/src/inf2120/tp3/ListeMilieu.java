@@ -3,14 +3,36 @@ package inf2120.tp3;
 public class ListeMilieu< E extends Comparable< E > > {
 
     private int tailleListeSuperieur = 0;
-    private Maillon<E> debutListeSuperieure;
+    private MaillonListeMilieu<E> debutListeSuperieure;
     private int tailleListeInferieure = 0;
-    private Maillon<E> debutListeInferieure;
+    private MaillonListeMilieu<E> debutListeInferieure;
 
     public ListeMilieu() {}
 
+    public boolean contient( E valeur ){
+        boolean contient = false;
+        MaillonListeMilieu<E> maillonCourant;
+        if ( valeur.compareTo( milieu() ) > 0 && tailleListeSuperieur != 0){
+            maillonCourant = debutListeSuperieure;
+            contient = valeur.compareTo( maillonCourant.getValeur() ) == 0;
+            while (debutListeSuperieure.aSuivant() && !contient){
+                maillonCourant = maillonCourant.getSuivant();
+                contient = valeur.compareTo( maillonCourant.getValeur() ) == 0;
+            }
+        } else if ( valeur.compareTo( milieu() ) < 0){
+            maillonCourant = debutListeInferieure;
+            while (maillonCourant.aSuivant() && !contient){
+                maillonCourant = maillonCourant.getSuivant();
+                contient = valeur.compareTo( maillonCourant.getValeur() ) == 0;
+            }
+        } else if ( valeur.compareTo( milieu() ) == 0){
+            contient = true;
+        }
+        return contient;
+    }
+
     public ListeMilieu<E> diviser() {
-        Maillon<E> maillonCourant = debutListeSuperieure;
+        MaillonListeMilieu<E> maillonCourant = debutListeSuperieure;
         setDebutListeSuperieure( null );
         tailleListeSuperieur = 0;
 
@@ -27,7 +49,7 @@ public class ListeMilieu< E extends Comparable< E > > {
 
     public void inserer( E valeur ) {
         if ( taille() == 0 ){
-            setDebutListeInferieure(new Maillon<>( valeur ));
+            setDebutListeInferieure(new MaillonListeMilieu<>( valeur ));
             tailleListeInferieure++;
         } else {
             if ( milieu().compareTo( valeur ) > 0 ){
@@ -40,8 +62,8 @@ public class ListeMilieu< E extends Comparable< E > > {
     }
 
     private void equilibrer(){
-        Maillon<E> tempSup;
-        Maillon<E> tempInf;
+        MaillonListeMilieu<E> tempSup;
+        MaillonListeMilieu<E> tempInf;
 
         while (!isEquilibrer()){
             if ( tailleListeSuperieur == 0 ){
@@ -76,13 +98,13 @@ public class ListeMilieu< E extends Comparable< E > > {
     }
 
     private void insererSuperieure ( E valeur ){
-        Maillon<E> nouveauMaillon = new Maillon<>( valeur );
+        MaillonListeMilieu<E> nouveauMaillon = new MaillonListeMilieu<>( valeur );
         boolean inserer = false;
         if ( tailleListeSuperieur == 0 ){
             setDebutListeSuperieure( nouveauMaillon );
             tailleListeSuperieur++;
         }else {
-            Maillon<E> maillonCourant = debutListeSuperieure;
+            MaillonListeMilieu<E> maillonCourant = debutListeSuperieure;
             if ( valeur.compareTo( maillonCourant.getValeur() ) <= 0 ){
                 if ( valeur.compareTo( maillonCourant.getValeur() ) != 0) {
                     nouveauMaillon.setSuivant(maillonCourant);
@@ -113,12 +135,12 @@ public class ListeMilieu< E extends Comparable< E > > {
 
     // Peut pas etre vide
     private void insererInferieure ( E valeur ){
-        Maillon<E> maillonCourant = debutListeInferieure;
+        MaillonListeMilieu<E> maillonCourant = debutListeInferieure;
         boolean inserer = false;
         while ( maillonCourant.aSuivant() ){
             if (valeur.compareTo( maillonCourant.getSuivant().getValeur() ) >= 0 && !inserer ){
                 if ( valeur.compareTo( maillonCourant.getSuivant().getValeur() ) != 0) {
-                    Maillon<E> nouveauMaillon = new Maillon<>(valeur);
+                    MaillonListeMilieu<E> nouveauMaillon = new MaillonListeMilieu<>(valeur);
                     nouveauMaillon.setSuivant(maillonCourant.getSuivant());
                     maillonCourant.setSuivant(nouveauMaillon);
                     tailleListeInferieure++;
@@ -129,7 +151,7 @@ public class ListeMilieu< E extends Comparable< E > > {
             }
         }
         if ( !inserer ){
-            maillonCourant.setSuivant( new Maillon<>( valeur ));
+            maillonCourant.setSuivant( new MaillonListeMilieu<>( valeur ));
             tailleListeInferieure++;
         }
     }
@@ -139,7 +161,7 @@ public class ListeMilieu< E extends Comparable< E > > {
     }
 
     public E minima() {
-        Maillon<E> maillonCourant = debutListeInferieure;
+        MaillonListeMilieu<E> maillonCourant = debutListeInferieure;
         int i = 0;
         while( i < tailleListeInferieure - 1 ){
             maillonCourant = maillonCourant.getSuivant();
@@ -149,7 +171,7 @@ public class ListeMilieu< E extends Comparable< E > > {
     }
 
     public E maxima() {
-        Maillon<E> maillonCourant;
+        MaillonListeMilieu<E> maillonCourant;
         E valeurRetour;
         int i = 0;
         if ( tailleListeSuperieur == 0){
@@ -167,8 +189,8 @@ public class ListeMilieu< E extends Comparable< E > > {
 
     public void supprimer( E valeur ) {
         boolean egaliteeTrouvee = false;
-        Maillon<E> maillonComparaison = debutListeInferieure;
-        Maillon<E> maillonPrecedent;
+        MaillonListeMilieu<E> maillonComparaison = debutListeInferieure;
+        MaillonListeMilieu<E> maillonPrecedent;
         if (debutListeInferieure.getValeur().compareTo( valeur ) == 0){
             if (tailleListeInferieure > 1){
                 debutListeInferieure = debutListeInferieure.getSuivant();
@@ -236,11 +258,11 @@ public class ListeMilieu< E extends Comparable< E > > {
         this.tailleListeSuperieur = tailleListeSuperieur;
     }
 
-    public Maillon<E> getDebutListeSuperieure() {
+    public MaillonListeMilieu<E> getDebutListeSuperieure() {
         return debutListeSuperieure;
     }
 
-    public void setDebutListeSuperieure(Maillon<E> debutListeSuperieure) {
+    public void setDebutListeSuperieure(MaillonListeMilieu<E> debutListeSuperieure) {
         this.debutListeSuperieure = debutListeSuperieure;
     }
 
@@ -252,11 +274,11 @@ public class ListeMilieu< E extends Comparable< E > > {
         this.tailleListeInferieure = tailleListeInferieure;
     }
 
-    public Maillon<E> getDebutListeInferieure() {
+    public MaillonListeMilieu<E> getDebutListeInferieure() {
         return debutListeInferieure;
     }
 
-    public void setDebutListeInferieure(Maillon<E> debutListeInferieure) {
+    public void setDebutListeInferieure(MaillonListeMilieu<E> debutListeInferieure) {
         this.debutListeInferieure = debutListeInferieure;
     }
 }
