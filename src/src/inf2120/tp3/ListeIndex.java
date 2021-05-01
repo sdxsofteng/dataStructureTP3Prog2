@@ -5,6 +5,7 @@ package inf2120.tp3;
  * @CodePermanent DESS21079605
  * @version  2021-05-01
  *
+ * Contient une liste de ListeMaillon
  * @param <E>
  */
 public class ListeIndex<E extends Comparable< E > > {
@@ -15,6 +16,11 @@ public class ListeIndex<E extends Comparable< E > > {
 
     public ListeIndex() {}
 
+    /**
+     * Vérifie si une des ListesMilieux pourraient contenir la valeur
+     * @param valeur valeur que l'on vérifie
+     * @return true -> contient false -> ne contient pas
+     */
     public boolean contient(E valeur ) {
         boolean listeMilieuTrouvee = false;
         boolean contient = false;
@@ -37,6 +43,13 @@ public class ListeIndex<E extends Comparable< E > > {
         return contient;
     }
 
+    /**
+     * Permet de renvoyer la Liste Milieu à l'index i
+     * On ne fait que comparer chaque index de chaque maillon et quand l'index match avec l'index désiré, on renvoie
+     * la ListeMilieu
+     * @param i index de la ListeMilieu désirée
+     * @return listeMilieu appropriée
+     */
     public ListeMilieu<E> get( int i ) {
         ListeMilieu<E> retour = null;
         MaillonListeIndex<E> maillonComparaison;
@@ -58,6 +71,15 @@ public class ListeIndex<E extends Comparable< E > > {
         return retour;
     }
 
+    /**
+     * Inserer la valeur dans la bonne listeMilieu
+     * On commence par faire les insertionsPremieresFois donc, insertion lorsqu'on a aucune liste milieu, et quand on
+     * en a qu'une seule
+     * Si sa ne fonctionne pas, on continue par l'insertion dans liste
+     * On finit par equilibrer les listes Milieux
+     * Et on indexe les listes milieux
+     * @param valeur valeur a inserer
+     */
     public void inserer( E valeur ) {
         boolean estInserer = false;
         estInserer = inserererPremieresFois(valeur, estInserer);
@@ -70,6 +92,12 @@ public class ListeIndex<E extends Comparable< E > > {
         indexer();
     }
 
+    /**
+     * Ceci englobe tous les cas qui peuvent se produire lors de l'insertion au début du programme.
+     * @param valeur valeur a insérer
+     * @param estInserer si la valeur est insérer  = true;
+     * @return estInserer pour référence future
+     */
     private boolean inserererPremieresFois(E valeur, boolean estInserer) {
         if (nbrListe == 0){
             debutListeIndex = new MaillonListeIndex<>( new ListeMilieu<E>());
@@ -85,6 +113,16 @@ public class ListeIndex<E extends Comparable< E > > {
         return estInserer;
     }
 
+    /**
+     * Ici on a les cas typiques,
+     * 1) Lorsqu'on doit placer dans la première liste
+     * 2) Lorsqu'on doit placer dans une liste entre la première et la dernière
+     * 3) Lorsqu'on doit placer dans la dernière liste
+     * @param valeur valeur a insérer
+     * @param estInserer si la valeur est insérée pour référence future
+     * @param x a quel liste nous sommes rendu dans la vérification
+     * @return est inserer
+     */
     private boolean insererDansListe(E valeur, boolean estInserer, int x) {
         if ( x == 0 && nbrListe == 1){
             get(x).inserer(valeur);
@@ -103,11 +141,13 @@ public class ListeIndex<E extends Comparable< E > > {
         return estInserer;
     }
 
+    /**
+     * Permet de rééquilibrer les listes selon la tailleMax.
+     * Tant que toutes les listes ne sont pas équilibrées on recommence la boucle
+     */
     public void equilibrer(){
         while ( !isToutEquilibrer() ){
             MaillonListeIndex<E> maillonListeCourant = debutListeIndex;
-            MaillonListeIndex<E> suivant;
-            ListeMilieu<E> nouvelleListe;
             if (!isListeEquilibrer( maillonListeCourant )){
                 reequilibrerPremiereListe(maillonListeCourant);
             } while ( maillonListeCourant.aSuivant() ){
@@ -117,6 +157,10 @@ public class ListeIndex<E extends Comparable< E > > {
         }
     }
 
+    /**
+     * Permet de rééquilibrer les liste de l'index 1 a l'index nbrListe-1
+     * @param maillonListeCourant maillon auquel nous sommes rendus
+     */
     private void reequilibrerListeSuivantes(MaillonListeIndex<E> maillonListeCourant) {
         ListeMilieu<E> nouvelleListe;
         MaillonListeIndex<E> suivant;
@@ -133,6 +177,10 @@ public class ListeIndex<E extends Comparable< E > > {
         }
     }
 
+    /**
+     * Permet de rééquilibrer la première liste (cas spéciaux)
+     * @param maillonListeCourant maillon auquel nous sommes rendu
+     */
     private void reequilibrerPremiereListe(MaillonListeIndex<E> maillonListeCourant) {
         ListeMilieu<E> nouvelleListe;
         MaillonListeIndex<E> suivant;
@@ -149,6 +197,11 @@ public class ListeIndex<E extends Comparable< E > > {
         }
     }
 
+    /**
+     * Parcoure toutes les listes et compare leurs longueurs pour savoir si elles sont toutes équilibrées
+     * Permet de rééquilibrer quand il y aurait deux rééquilibration à faire
+     * @return true - toute equilibree false - pas toute equilibree
+     */
     public boolean isToutEquilibrer(){
         boolean toutEquilibrer;
         tailleMax = nbrListe * 2;
@@ -163,11 +216,19 @@ public class ListeIndex<E extends Comparable< E > > {
         return toutEquilibrer;
     }
 
+    /**
+     * Permet de savoir si une liste spécifique est équilibrée
+     * @param maillonListeIndex maillon qui contient la ListeMaillon a vérifier
+     * @return true est équilibrée - false pas équilibrée
+     */
     public boolean isListeEquilibrer(MaillonListeIndex<E> maillonListeIndex){
         tailleMax = nbrListe * 2;
         return maillonListeIndex.getValeur().taille() <= tailleMax;
     }
 
+    /**
+     * Parcours toutes les listes et les indexes en ordre
+     */
     public void indexer(){
         int valeurIndexage = 0;
         MaillonListeIndex<E> maillonCourant;
@@ -188,6 +249,10 @@ public class ListeIndex<E extends Comparable< E > > {
         return nbrListe;
     }
 
+    /**
+     * Va trouver la ListeMilieu approprié pour ensuite aller supprimer la valeur à l'intérieur de celle-ci
+     * @param valeur valeur a supprimer
+     */
     public void supprimer( E valeur ) {
         boolean listeMilieuTrouvee = false;
         MaillonListeIndex<E> listeIndexCourante = debutListeIndex;
@@ -207,6 +272,10 @@ public class ListeIndex<E extends Comparable< E > > {
         }
     }
 
+    /**
+     * Calcule la taille totale de toutes les listes mises ensembles
+     * @return taille totale
+     */
     public int taille() {
         MaillonListeIndex<E> maillonCourant;
         int tailleListe;
