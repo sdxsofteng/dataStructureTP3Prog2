@@ -1,5 +1,12 @@
 package inf2120.tp3;
 
+/**
+ * @author Simon Désormeaux
+ * @CodePermanent DESS21079605
+ * @version  2021-05-01
+ *
+ * @param <E>
+ */
 public class ListeIndex<E extends Comparable< E > > {
 
     MaillonListeIndex<E> debutListeIndex;
