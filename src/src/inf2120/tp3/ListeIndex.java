@@ -53,36 +53,47 @@ public class ListeIndex<E extends Comparable< E > > {
 
     public void inserer( E valeur ) {
         boolean estInserer = false;
-        if (nbrListe == 0){
-            debutListeIndex = new MaillonListeIndex<>( new ListeMilieu<E>());
-            debutListeIndex.setIndex( 0 );
-            debutListeIndex.getValeur().inserer( valeur );
-            nbrListe++;
-            estInserer = true;
-        } if ( nbrListe == 1 && !estInserer){
-            debutListeIndex.getValeur().inserer( valeur );
-            estInserer = true;
-        }
+        estInserer = inserererPremieresFois(valeur, estInserer);
         int x = 0;
         while ( !estInserer && x < nbrListe ){
-            if ( x == 0 && nbrListe == 1){
-                get( x ).inserer( valeur );
-                estInserer = true;
-            } else if( x == 0 && valeur.compareTo( get( x + 1 ).minima() ) < 0){
-                get( x ).inserer( valeur );
-                estInserer = true;
-            } else if ( x != 0 && x < nbrListe - 1 && valeur.compareTo( get( x ).minima()) >= 0
-                    && valeur.compareTo( get( x + 1).minima()) < 0 ){
-                get( x ).inserer( valeur );
-                estInserer = true;
-            } else if ( x == nbrListe - 1 && valeur.compareTo( get( x ).minima()) >= 0){
-                get( x ).inserer( valeur );
-                estInserer = true;
-            }
+            estInserer = insererDansListe(valeur, estInserer, x);
             x++;
         }
         equilibrer();
         indexer();
+    }
+
+    private boolean inserererPremieresFois(E valeur, boolean estInserer) {
+        if (nbrListe == 0){
+            debutListeIndex = new MaillonListeIndex<>( new ListeMilieu<E>());
+            debutListeIndex.setIndex( 0 );
+            debutListeIndex.getValeur().inserer(valeur);
+            nbrListe++;
+            estInserer = true;
+        }
+        if ( nbrListe == 1 && !estInserer){
+            debutListeIndex.getValeur().inserer(valeur);
+            estInserer = true;
+        }
+        return estInserer;
+    }
+
+    private boolean insererDansListe(E valeur, boolean estInserer, int x) {
+        if ( x == 0 && nbrListe == 1){
+            get(x).inserer(valeur);
+            estInserer = true;
+        } else if( x == 0 && valeur.compareTo( get( x + 1 ).minima() ) < 0){
+            get(x).inserer(valeur);
+            estInserer = true;
+        } else if ( x != 0 && x < nbrListe - 1 && valeur.compareTo( get(x).minima()) >= 0
+                && valeur.compareTo( get( x + 1).minima()) < 0 ){
+            get(x).inserer(valeur);
+            estInserer = true;
+        } else if ( x == nbrListe - 1 && valeur.compareTo( get(x).minima()) >= 0){
+            get(x).inserer(valeur);
+            estInserer = true;
+        }
+        return estInserer;
     }
 
     public void equilibrer(){
@@ -91,31 +102,43 @@ public class ListeIndex<E extends Comparable< E > > {
             MaillonListeIndex<E> suivant;
             ListeMilieu<E> nouvelleListe;
             if (!isListeEquilibrer( maillonListeCourant )){
-                if ( nbrListe == 1 ){
-                    nouvelleListe = maillonListeCourant.getValeur().diviser();
-                    maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
-                    nbrListe++;
-                } else {
-                    nouvelleListe = maillonListeCourant.getValeur().diviser();
-                    suivant = maillonListeCourant.getSuivant();
-                    maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
-                    maillonListeCourant.getSuivant().setSuivant( suivant );
-                    nbrListe++;
-                }
+                reequilibrerPremiereListe(maillonListeCourant);
             } while ( maillonListeCourant.aSuivant() ){
                 maillonListeCourant = maillonListeCourant.getSuivant();
-                if (!isListeEquilibrer( maillonListeCourant ) && maillonListeCourant.aSuivant()){
-                    nouvelleListe = maillonListeCourant.getValeur().diviser();
-                    suivant = maillonListeCourant.getSuivant();
-                    maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
-                    maillonListeCourant.getSuivant().setSuivant( suivant );
-                    nbrListe++;
-                }else if (!isListeEquilibrer( maillonListeCourant ) && !maillonListeCourant.aSuivant()){
-                    nouvelleListe = maillonListeCourant.getValeur().diviser();
-                    maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
-                    nbrListe++;
-                }
+                reequilibrerListeSuivantes(maillonListeCourant);
             }
+        }
+    }
+
+    private void reequilibrerListeSuivantes(MaillonListeIndex<E> maillonListeCourant) {
+        ListeMilieu<E> nouvelleListe;
+        MaillonListeIndex<E> suivant;
+        if (!isListeEquilibrer(maillonListeCourant) && maillonListeCourant.aSuivant()){
+            nouvelleListe = maillonListeCourant.getValeur().diviser();
+            suivant = maillonListeCourant.getSuivant();
+            maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
+            maillonListeCourant.getSuivant().setSuivant( suivant );
+            nbrListe++;
+        }else if (!isListeEquilibrer(maillonListeCourant) && !maillonListeCourant.aSuivant()){
+            nouvelleListe = maillonListeCourant.getValeur().diviser();
+            maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
+            nbrListe++;
+        }
+    }
+
+    private void reequilibrerPremiereListe(MaillonListeIndex<E> maillonListeCourant) {
+        ListeMilieu<E> nouvelleListe;
+        MaillonListeIndex<E> suivant;
+        if ( nbrListe == 1 ){
+            nouvelleListe = maillonListeCourant.getValeur().diviser();
+            maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
+            nbrListe++;
+        } else {
+            nouvelleListe = maillonListeCourant.getValeur().diviser();
+            suivant = maillonListeCourant.getSuivant();
+            maillonListeCourant.setSuivant( new MaillonListeIndex<>( nouvelleListe ));
+            maillonListeCourant.getSuivant().setSuivant( suivant );
+            nbrListe++;
         }
     }
 

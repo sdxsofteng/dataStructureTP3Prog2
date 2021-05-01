@@ -105,31 +105,47 @@ public class ListeMilieu< E extends Comparable< E > > {
             tailleListeSuperieur++;
         }else {
             MaillonListeMilieu<E> maillonCourant = debutListeSuperieure;
-            if ( valeur.compareTo( maillonCourant.getValeur() ) <= 0 ){
-                if ( valeur.compareTo( maillonCourant.getValeur() ) != 0) {
-                    nouveauMaillon.setSuivant(maillonCourant);
-                    setDebutListeSuperieure(nouveauMaillon);
-                    tailleListeSuperieur++;
-                }
-                inserer = true;
-            }
+            inserer = insererPremierListeSup(valeur, nouveauMaillon, inserer, maillonCourant);
             while ( maillonCourant.aSuivant() && !inserer ){
                 if ( valeur.compareTo( maillonCourant.getSuivant().getValeur() ) <= 0 ){
-                    if ( valeur.compareTo( maillonCourant.getSuivant().getValeur() ) != 0) {
-                        nouveauMaillon.setSuivant(maillonCourant.getSuivant());
-                        maillonCourant.setSuivant(nouveauMaillon);
-                        tailleListeSuperieur++;
-                    }
+                    insererMilieuListeSup(valeur, nouveauMaillon, maillonCourant);
                     inserer = true;
                 } else {
                     maillonCourant = maillonCourant.getSuivant();
                 }
             }
-            if ( !inserer ){
-                maillonCourant.setSuivant( nouveauMaillon );
+            insererFinListeSup(nouveauMaillon, inserer, maillonCourant);
+        }
+    }
+
+    private void insererMilieuListeSup(E valeur, MaillonListeMilieu<E> nouveauMaillon,
+                                       MaillonListeMilieu<E> maillonCourant) {
+        if ( valeur.compareTo( maillonCourant.getSuivant().getValeur() ) != 0) {
+            nouveauMaillon.setSuivant(maillonCourant.getSuivant());
+            maillonCourant.setSuivant(nouveauMaillon);
+            tailleListeSuperieur++;
+        }
+    }
+
+    private void insererFinListeSup(MaillonListeMilieu<E> nouveauMaillon, boolean inserer,
+                                    MaillonListeMilieu<E> maillonCourant) {
+        if ( !inserer){
+            maillonCourant.setSuivant(nouveauMaillon);
+            tailleListeSuperieur++;
+        }
+    }
+
+    private boolean insererPremierListeSup(E valeur, MaillonListeMilieu<E> nouveauMaillon, boolean inserer,
+                                           MaillonListeMilieu<E> maillonCourant) {
+        if ( valeur.compareTo( maillonCourant.getValeur() ) <= 0 ){
+            if ( valeur.compareTo( maillonCourant.getValeur() ) != 0) {
+                nouveauMaillon.setSuivant(maillonCourant);
+                setDebutListeSuperieure(nouveauMaillon);
                 tailleListeSuperieur++;
             }
+            inserer = true;
         }
+        return inserer;
     }
 
 
@@ -192,58 +208,79 @@ public class ListeMilieu< E extends Comparable< E > > {
         MaillonListeMilieu<E> maillonComparaison = debutListeInferieure;
         MaillonListeMilieu<E> maillonPrecedent;
         if (debutListeInferieure.getValeur().compareTo( valeur ) == 0){
-            if (tailleListeInferieure > 1){
-                debutListeInferieure = debutListeInferieure.getSuivant();
-            } else {
-                debutListeInferieure = null;
-            }
-            egaliteeTrouvee = true;
-            tailleListeInferieure--;
+            egaliteeTrouvee = supprimerDebutListeInf();
         }
         int i = 0;
         while ( !egaliteeTrouvee && i < tailleListeInferieure - 1){
             maillonPrecedent = maillonComparaison;
             maillonComparaison = maillonComparaison.getSuivant();
-            if (maillonComparaison.aSuivant() && maillonComparaison.getValeur().compareTo( valeur ) == 0 ){
-                maillonPrecedent.setSuivant( maillonComparaison.getSuivant() );
-                egaliteeTrouvee = true;
-                tailleListeInferieure--;
-            }else if ( maillonComparaison.getValeur().compareTo( valeur ) == 0 ){
-                maillonPrecedent.setSuivant( null );
-                egaliteeTrouvee = true;
-                tailleListeInferieure--;
-            }
+            egaliteeTrouvee = supprimerResteListeInf(valeur, egaliteeTrouvee, maillonComparaison, maillonPrecedent);
             i++;
         }
         if ( !egaliteeTrouvee && tailleListeSuperieur > 0 ){
             maillonComparaison = debutListeSuperieure;
-            //egaliteeTrouvee = debutListeSuperieure.getValeur().compareTo( valeur ) == 0;
-            if ( debutListeSuperieure.getValeur().compareTo( valeur ) == 0 ){
-                if ( tailleListeSuperieur > 1 ){
-                    debutListeSuperieure = debutListeSuperieure.getSuivant();
-                } else {
-                    debutListeSuperieure = null;
-                }
-                egaliteeTrouvee = true;
-                tailleListeSuperieur--;
-            }
+            egaliteeTrouvee = supprimerDebutListeSup(valeur, egaliteeTrouvee);
             int y = 0;
             while ( !egaliteeTrouvee && y < tailleListeSuperieur - 1 ){
                 maillonPrecedent = maillonComparaison;
                 maillonComparaison = maillonComparaison.getSuivant();
-                if ( maillonComparaison.aSuivant() && maillonComparaison.getValeur().compareTo( valeur ) == 0 ){
-                    maillonPrecedent.setSuivant( maillonComparaison.getSuivant() );
-                    egaliteeTrouvee = true;
-                    tailleListeSuperieur--;
-                }else if ( maillonComparaison.getValeur().compareTo( valeur ) == 0 ){
-                    maillonPrecedent.setSuivant( null );
-                    egaliteeTrouvee = true;
-                    tailleListeSuperieur--;
-                }
+                egaliteeTrouvee = supprimerResteListeSup(valeur, egaliteeTrouvee, maillonComparaison, maillonPrecedent);
                 y++;
             }
         }
         equilibrer();
+    }
+
+    private boolean supprimerResteListeSup(E valeur, boolean egaliteeTrouvee, MaillonListeMilieu<E> maillonComparaison, MaillonListeMilieu<E> maillonPrecedent) {
+        if ( maillonComparaison.aSuivant() && maillonComparaison.getValeur().compareTo(valeur) == 0 ){
+            maillonPrecedent.setSuivant( maillonComparaison.getSuivant() );
+            egaliteeTrouvee = true;
+            tailleListeSuperieur--;
+        }else if ( maillonComparaison.getValeur().compareTo(valeur) == 0 ){
+            maillonPrecedent.setSuivant( null );
+            egaliteeTrouvee = true;
+            tailleListeSuperieur--;
+        }
+        return egaliteeTrouvee;
+    }
+
+    private boolean supprimerDebutListeSup(E valeur, boolean egaliteeTrouvee) {
+        if ( debutListeSuperieure.getValeur().compareTo(valeur) == 0 ){
+            if ( tailleListeSuperieur > 1 ){
+                debutListeSuperieure = debutListeSuperieure.getSuivant();
+            } else {
+                debutListeSuperieure = null;
+            }
+            egaliteeTrouvee = true;
+            tailleListeSuperieur--;
+        }
+        return egaliteeTrouvee;
+    }
+
+    private boolean supprimerResteListeInf(E valeur, boolean egaliteeTrouvee, MaillonListeMilieu<E> maillonComparaison,
+                                           MaillonListeMilieu<E> maillonPrecedent) {
+        if (maillonComparaison.aSuivant() && maillonComparaison.getValeur().compareTo(valeur) == 0 ){
+            maillonPrecedent.setSuivant( maillonComparaison.getSuivant() );
+            egaliteeTrouvee = true;
+            tailleListeInferieure--;
+        }else if ( maillonComparaison.getValeur().compareTo(valeur) == 0 ){
+            maillonPrecedent.setSuivant( null );
+            egaliteeTrouvee = true;
+            tailleListeInferieure--;
+        }
+        return egaliteeTrouvee;
+    }
+
+    private boolean supprimerDebutListeInf() {
+        boolean egaliteeTrouvee;
+        if (tailleListeInferieure > 1){
+            debutListeInferieure = debutListeInferieure.getSuivant();
+        } else {
+            debutListeInferieure = null;
+        }
+        egaliteeTrouvee = true;
+        tailleListeInferieure--;
+        return egaliteeTrouvee;
     }
 
     public int taille() {
