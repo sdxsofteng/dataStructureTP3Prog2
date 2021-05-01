@@ -144,6 +144,13 @@ class ListeMilieuTest {
     }
 
     @Test
+    void inserer_Valeurs_Same_Loin(){
+        ListeMilieu< Integer > a = construire( 1, 4, 5, 8, 10, 4, 8);
+
+        assertEquals( 5 , a.taille());
+    }
+
+    @Test
     void inserer_deuxValeurs_double_maxima() {
         ListeMilieu< Integer > a = construire( 4, 4 );
 
@@ -325,6 +332,7 @@ class ListeMilieuTest {
     // Tests pour la suppression
 
     // 2 valeurs
+
 
     @Test
     void supprimer_maxima_de_deuxValeurs_taille() {
@@ -850,4 +858,7 @@ class ListeMilieuTest {
 
         assertTrue( a.taille() <= NOMBRE_CHOIX );
     }
+
+
+
 }
